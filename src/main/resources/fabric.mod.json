@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
-  "id": "elytra-flight-hud",
+  "id": "skyass",
   "version": "${version}",
 
-  "name": "Elytra Flight Hud",
+  "name": "Skyass",
   "description": "Adds a jet-like flight hud when using the elytra.",
   "authors": [
-    "Timo Zuccarello"
+    "Timo Zuccarello", "AsinusGrandus"
   ],
   "contact": {
-    "homepage": "https://deltatimo.eu/",
-    "sources": "https://github.com/DeltaTimo/elytra-flight-hud"
+    "homepage": "",
+    "sources": "https://github.com/AsinusGrandus/skyass"
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/elytra-flight-hud/icon.png",
+  "icon": "assets/skyass/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "client": [
-      "eu.deltatimo.minecraft.elytrahud.ElytraFlightHud"
+      "asinusgrandus.skyass.SkyassModClient"
     ]
   },
   "mixins": [
