@@ -1,4 +1,4 @@
-package asinusgrandus.skyass;
+package eu.deltatimo.minecraft.elytrahud;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -10,14 +10,14 @@ import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SkyassModClient implements ClientModInitializer {
+public class ElytraFlightHudModClient implements ClientModInitializer {
 	/**
 	 * This logger is used to write text to the console and the log file.
 	 * It is considered best practice to use your mod id as the logger's name.
 	 * That way, it's clear which mod wrote info, warnings, and errors.
  	 */
 
-	public static final String MOD_ID = "skyass";
+	public static final String MOD_ID = "elytra-flight-hud";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
 	@Override

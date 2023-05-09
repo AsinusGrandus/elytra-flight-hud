@@ -1,4 +1,4 @@
-package asinusgrandus.skyass;
+package eu.deltatimo.minecraft.elytrahud;
 
 public class DrawLineArguments {
     public float x;
