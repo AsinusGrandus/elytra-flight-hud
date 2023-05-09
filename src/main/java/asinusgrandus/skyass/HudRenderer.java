@@ -8,6 +8,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix3f;
@@ -18,11 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class OnHudRender {
-    public static float hud_alpha = 0.0f;
+public class HudRenderer {
 
     private static boolean hudEnabled = true;
-
+    private static float hud_alpha = 0.0f;
     public static boolean shouldRenderHud(){
         return hudEnabled;
     }
@@ -32,14 +32,18 @@ public class OnHudRender {
     }
 
     public static void onHudRender(MatrixStack stack, float tickDelta) {
+
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         MinecraftClient client = MinecraftClient.getInstance();
         Window window = client.getWindow();
+
         double aspect = (double) window.getWidth() / (double) window.getHeight();
+
         double fov_deg = client.options.getFov().getValue();
         double fov = Math.toRadians(fov_deg);
         double hor_fov = 2.0 * Math.atan(Math.tan(fov / 2.0) * aspect);
         double hor_fov_deg = Math.toDegrees(hor_fov);
+
         int screenWidth = window.getScaledWidth();
         int screenHeight = window.getScaledHeight();
         int screenLesser = Math.min(screenWidth, screenHeight);
@@ -50,6 +54,7 @@ public class OnHudRender {
         Camera camera = gameRenderer.getCamera();
         double camera_pitch_deg = camera.getPitch();
         double camera_pitch = Math.toRadians(camera_pitch_deg);
+
         float pixels_per_deg = (float) (screenHeight / fov_deg);
         float pixels_per_hor_deg = (float) (screenHeight / hor_fov_deg);
 
@@ -61,50 +66,51 @@ public class OnHudRender {
         float center_height = screenCenterY + ((float) (pixels_per_deg * -camera_pitch_deg));
 
         ClientPlayerEntity player = client.player;
+
         if (player != null) {
+            /**
+             * Figure out if the overlay needs to be rendered:
+             * - the player is falling &&
+             * - the hud is enabled
+             * */
             float hud_alpha_target = player.isFallFlying() ? 1.0f : 0.0f;
             if (!hudEnabled) {
                 hud_alpha_target = 0.0f;
             }
-            // float hud_alpha_target = 1f;
+
+            // Fade in and out effect when overlay starts/stops rendering
             hud_alpha = Math.max(0f, Math.min(1f, hud_alpha + Math.signum(hud_alpha_target - hud_alpha) * tickDelta * 0.1f));
+
+            // If the hud_alpha high enough, render the overlay
             if (hud_alpha >= 0.0001) {
                 Vec3d player_pos = player.getPos();
-                // Vec3f velocity = new Vec3f(player.getVelocity());
-                // velocity.rotate(player.getMovementDirection().getRotationQuaternion());
                 Vec3d velocity = player.getVelocity().rotateY((float) Math.toRadians(camera.getYaw())).rotateX((float) Math.toRadians(camera.getPitch()));
-                // double upwardSpeed = velocity.getY();
+
                 double upwardSpeed = velocity.getY();
                 double forwardSpeed = velocity.getZ();
                 double sidewaysSpeed = -velocity.getX();
+
                 double upwardSpeedAngle = Math.toDegrees(Math.atan2(upwardSpeed, forwardSpeed));
                 double rightSpeedAngle = Math.toDegrees(Math.atan2(sidewaysSpeed, forwardSpeed));
+
                 float flight_vector_x = screenCenterX + (float) (pixels_per_hor_deg * rightSpeedAngle);
                 float flight_vector_y = screenCenterY - (float) (pixels_per_deg * upwardSpeedAngle);
 
-                int radar_height = 0;
-                BlockPos player_blockpos = player.getBlockPos();
-                if (client.world != null) {
-                    for (int y = player.getBlockPos().getY() - 1; y >= client.world.getBottomY() && client.world.isAir(new BlockPos(player_blockpos.getX(), y, player_blockpos.getZ())); y--) {
-                        ++radar_height;
-                    }
-                }
+                int radar_height = getRadarHeight(player, client.world);
 
                 RenderSystem.setShaderColor(0f, 1f, 0f, 1f);
                 RenderSystem.setShader(GameRenderer::getPositionColorShader);
                 RenderSystem.enableBlend();
 
-                // MatrixStack modelviewstack = RenderSystem.getModelViewStack();
-                // modelviewstack.push();
-                // RenderSystem.applyModelViewMatrix();
                 Matrix4f matrix4f = stack.peek().getPositionMatrix();
                 Matrix3f matrix3f = stack.peek().getNormalMatrix();
-                // Matrix4f matrix4f = modelviewstack.peek().getPositionMatrix();
-                ///
+
                 GlStateManager._disableTexture();
                 GlStateManager._depthMask(false);
                 GlStateManager._disableCull();
+
                 RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
                 RenderSystem.lineWidth(2.0F);
@@ -218,7 +224,6 @@ public class OnHudRender {
                 // bufferBuilder.vertex((double)screenCenterX, (double)screenCenterY, -90.0D).color(0, 255, 0, 255).normal(0.0F, 0.0F, 1.0F).next();
 
                 // Compass
-
                 float heading = camera.getYaw();
                 float compass_width = 0.85f * horizon_width;
                 int heading_tens = Math.round(heading / 10f);
@@ -316,21 +321,30 @@ public class OnHudRender {
         }
     }
 
+    /**
+     * Calculates mod from signed floats
+     * */
     private static float realMod(float a, float b) {
         float result = a % b;
         return result < 0 ? result + b : result;
     }
 
+    /**
+     * Calculates the lines for a circle with center x, y and a radius
+     * by dividing the circle into small straight lines
+     * */
     private static Collection<DrawLineArguments> circleLines(float x, float y, float radius, int parts) {
         ArrayList<DrawLineArguments> lines = new ArrayList<>(parts);
-        final double TWO_PI = Math.PI * 2D;
-        for (double phi = 0D; phi < TWO_PI; phi += TWO_PI/parts) {
+
+        for (double phi = 0D; phi < Constants.TWO_PI; phi += Constants.TWO_PI/parts) {
             double x1 = x + Math.cos(phi) * radius;
-            double x2 = x + Math.cos(phi + TWO_PI/parts) * radius;
+            double x2 = x + Math.cos(phi + Constants.TWO_PI/parts) * radius;
             double y1 = y + Math.sin(phi) * radius;
-            double y2 = y + Math.sin(phi + TWO_PI/parts) * radius;
+            double y2 = y + Math.sin(phi + Constants.TWO_PI/parts) * radius;
+
             lines.add(DrawLineArguments.make((float)x1, (float)y1, (float)x2, (float)y2));
         }
+
         return lines;
     }
 
@@ -338,5 +352,22 @@ public class OnHudRender {
         Vec3d velocity = player.getVelocity();
         Vec3d multiplied_velocity = velocity.multiply(0.99f, 0.98f, 0.99f);
         return multiplied_velocity.horizontalLength() * 10.0 - player.getSafeFallDistance();
+    }
+
+    /**
+     * Calculate how many air blocks are below the player
+     * (= How high the player is really flying in relation to the ground)
+     * */
+    private static int getRadarHeight(ClientPlayerEntity player, ClientWorld world){
+        int radar_height = 0;
+        BlockPos player_blockpos = player.getBlockPos();
+        if (world != null) {
+            for (int y = player.getBlockPos().getY() - 1; y >= world.getBottomY() && world.isAir(new BlockPos(player_blockpos.getX(), y, player_blockpos.getZ())); y--) {
+                ++radar_height;
+            }
+            return radar_height;
+        }
+
+        return 0;
     }
 }
