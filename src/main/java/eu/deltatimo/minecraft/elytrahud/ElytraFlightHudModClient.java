@@ -45,7 +45,4 @@ public class ElytraFlightHudModClient implements ClientModInitializer {
 
 		LOGGER.info("Skyass Elytra Flight Hud initialized!");
 	}
-
-	private void renderLine(float x, float y, float x2, float y2, float r, float g, float b, float a) {
-	}
 }

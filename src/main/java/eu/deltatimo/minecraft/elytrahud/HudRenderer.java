@@ -4,17 +4,16 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.Window;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
-
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -31,10 +30,10 @@ public class HudRenderer {
         hudEnabled = !hudEnabled;
     }
 
-    public static void onHudRender(MatrixStack stack, float tickDelta) {
+    public static void onHudRender(DrawContext context, float tickDelta) {
 
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         MinecraftClient client = MinecraftClient.getInstance();
+        TextRenderer textRenderer = client.textRenderer;
         Window window = client.getWindow();
 
         double aspect = (double) window.getWidth() / (double) window.getHeight();
@@ -50,8 +49,7 @@ public class HudRenderer {
         int screenCenterX = screenWidth / 2;
         int screenCenterY = screenHeight / 2;
 
-        GameRenderer gameRenderer = MinecraftClient.getInstance().gameRenderer;
-        Camera camera = gameRenderer.getCamera();
+        Camera camera = client.gameRenderer.getCamera();
         double camera_pitch_deg = camera.getPitch();
         double camera_pitch = Math.toRadians(camera_pitch_deg);
 
@@ -99,17 +97,20 @@ public class HudRenderer {
                 int radar_height = getRadarHeight(player, client.world);
 
                 RenderSystem.setShaderColor(0f, 1f, 0f, 1f);
-                RenderSystem.setShader(GameRenderer::getPositionColorShader);
+                // (method_34540) 1.19.x: GameRenderer::getPositionColorShader => 1.20.x: GameRenderer::getPositionColorProgram
+                RenderSystem.setShader(GameRenderer::getPositionColorProgram);
                 RenderSystem.enableBlend();
 
-                Matrix4f matrix4f = stack.peek().getPositionMatrix();
-                Matrix3f matrix3f = stack.peek().getNormalMatrix();
+                Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
+                Matrix3f matrix3f = context.getMatrices().peek().getNormalMatrix();
 
-                GlStateManager._disableTexture();
+                // Broken in 1.20 GlStateManager._disableTexture();
+
                 GlStateManager._depthMask(false);
                 GlStateManager._disableCull();
 
-                RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+                // (method_34535) 1.19.x: GameRenderer::getRenderTypeLinesShader => 1.20.x GameRenderer::getRenderTypeLinesProgram
+                RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
 
                 Tessellator tessellator = Tessellator.getInstance();
                 BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -272,11 +273,11 @@ public class HudRenderer {
                         float height = screenCenterY + diff_pixels - (i > 0 ? (0.9f * textRenderer.fontHeight) : (textRenderer.fontHeight * (0.15f)));
                         if (height > screenHeight * 0.85f || height < screenHeight * 0.15f) continue;
                         String text = "" + Math.abs(i);
-                        textRenderer.draw(stack, text, screenCenterX + horizon_width / 2f, height, 0x00FF00);
-                        textRenderer.draw(stack, text, screenCenterX - horizon_width / 2f - textRenderer.getWidth(text) - screenWidth / 500f, height, 0x00FF00);
+                        context.drawText(textRenderer, text, (int) (screenCenterX + horizon_width / 2f), (int) height, 0x00FF00, false);
+                        context.drawText(textRenderer, text, (int) (screenCenterX - horizon_width / 2f - textRenderer.getWidth(text) - screenWidth / 500f), (int) height, 0x00FF00, false);
                     }
 
-                    textRenderer.draw(stack, "" + ((int) Math.floor(player_pos.y)), screenCenterX + horizon_width * 0.8f, (float) screenCenterY, 0x00FF00);
+                    context.drawText(textRenderer, "" + ((int) Math.floor(player_pos.y)), (int)(screenCenterX + horizon_width * 0.8f), (int) screenCenterY, 0x00FF00, false);
                     // textRenderer.draw(stack, "" + (Math.round((float) player_velocity_vector.y * 10f)), screenCenterX + horizon_width * 0.8f, (float) screenCenterY + textRenderer.fontHeight * 1.5f, 0x00FF00);
                     int fall_distance_color = 0x00FF00;
                     if (player.fallDistance > player.getSafeFallDistance() * 2f) {
@@ -286,8 +287,12 @@ public class HudRenderer {
                     } else if (player.fallDistance > player.getSafeFallDistance() * 0.75f) {
                         fall_distance_color = 0xFFFF00;
                     }
-                    textRenderer.draw(stack, "" + (Math.round((float) player_velocity_vector.y * 10f)), screenCenterX + horizon_width * 0.8f, (float) screenCenterY + textRenderer.fontHeight * 1.5f, fall_distance_color);
-                    textRenderer.draw(stack, radar_height + "R", screenCenterX + horizon_width * 0.75f, screenCenterY + screenHeight * (1f / 8f), 0x00FF00);
+
+                    // Text that changes colours (green-black)
+                    context.drawText(textRenderer, "" + (Math.round((float) player_velocity_vector.y * 10f)), (int)(screenCenterX + horizon_width * 0.8f), (int) (screenCenterY + textRenderer.fontHeight * 1.5f), fall_distance_color, false);
+
+                    // Radarheight
+                    context.drawText(textRenderer, radar_height + "R", (int)(screenCenterX + horizon_width * 0.75f), (int)(screenCenterY + screenHeight * (1f / 8f)), 0x00FF00, false);
 
                     // if (air_speed < 0.01) air_speed = 0;
 
@@ -298,7 +303,9 @@ public class HudRenderer {
                     } else if (collisionDamage > 0) {
                         air_speed_color = 0x44FF00;
                     }
-                    textRenderer.draw(stack, "" + air_speed, screenCenterX - horizon_width * 0.75f - textRenderer.getWidth("" + air_speed), (float) screenCenterY, air_speed_color);
+
+                    // Airspeed
+                    context.drawText(textRenderer, "" + air_speed, (int)(screenCenterX - horizon_width * 0.75f - textRenderer.getWidth("" + air_speed)), screenCenterY, air_speed_color, false);
 
                     for (float heading_blip = heading_fives - 3f * 0.5f; heading_blip <= heading / 10f + 3 * 0.5f; heading_blip += 0.5f) {
                         // Skip first blip if it's outside.
@@ -309,14 +316,14 @@ public class HudRenderer {
                             String heading_text = ((Math.floor(heading_blip_360) < 10) ? "0" : "") + (int) Math.floor(heading_blip_360);
                             float heading_offset = heading - (heading_blip * 10f);
                             float heading_x = screenCenterX - (heading_offset / 15f) * compass_width / 2f;
-                            textRenderer.draw(stack, heading_text, heading_x - textRenderer.getWidth(heading_text) / 2f, screenCenterY + screenHeight / 4f, 0x00FF00);
+                            context.drawText(textRenderer, heading_text, (int)(heading_x - textRenderer.getWidth(heading_text) / 2f), (int) (screenCenterY + screenHeight / 4f), 0x00FF00, false);
                         }
                     }
                 }
 
                 GlStateManager._enableCull();
                 GlStateManager._depthMask(true);
-                GlStateManager._enableTexture();
+                // Broken in 1.20 GlStateManager._enableTexture();
             }
         }
     }
@@ -361,13 +368,13 @@ public class HudRenderer {
     private static int getRadarHeight(ClientPlayerEntity player, ClientWorld world){
         int radar_height = 0;
         BlockPos player_blockpos = player.getBlockPos();
+
         if (world != null) {
             for (int y = player.getBlockPos().getY() - 1; y >= world.getBottomY() && world.isAir(new BlockPos(player_blockpos.getX(), y, player_blockpos.getZ())); y--) {
                 ++radar_height;
             }
-            return radar_height;
         }
 
-        return 0;
+        return radar_height;
     }
 }
