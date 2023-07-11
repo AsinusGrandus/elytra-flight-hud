@@ -43,6 +43,6 @@ public class ElytraFlightHudModClient implements ClientModInitializer {
 			}
 		});
 
-		LOGGER.info("Skyass Elytra Flight Hud initialized!");
+		LOGGER.info("Elytra Flight Hud initialized!");
 	}
 }

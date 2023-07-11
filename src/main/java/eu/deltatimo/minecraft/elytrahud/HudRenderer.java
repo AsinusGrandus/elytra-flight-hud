@@ -96,7 +96,9 @@ public class HudRenderer {
 
                 int radar_height = getRadarHeight(player, client.world);
 
-                RenderSystem.setShaderColor(0f, 1f, 0f, 1f);
+                // This line caused the advancement screen etc to be green
+                // RenderSystem.setShaderColor(0f, 1f, 0f, 1f);
+
                 // (method_34540) 1.19.x: GameRenderer::getPositionColorShader => 1.20.x: GameRenderer::getPositionColorProgram
                 RenderSystem.setShader(GameRenderer::getPositionColorProgram);
                 RenderSystem.enableBlend();
