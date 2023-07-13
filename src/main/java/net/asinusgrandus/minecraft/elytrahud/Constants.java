@@ -1,4 +1,4 @@
-package eu.deltatimo.minecraft.elytrahud;
+package net.asinusgrandus.minecraft.elytrahud;
 
 public class Constants {
     public static final float GRAVITY = -0.0784f;

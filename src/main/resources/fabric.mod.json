@@ -6,11 +6,11 @@
   "name": "Elytra Flight Hud",
   "description": "Adds a jet-like flight hud when using the elytra.",
   "authors": [
-    "Timo Zuccarello"
+    "Timo Zuccarello, AsinusGrandus"
   ],
   "contact": {
     "homepage": "https://deltatimo.eu/",
-    "sources": "https://github.com/DeltaTimo/elytra-flight-hud"
+    "sources": "https://github.com/AsinusGrandus/elytra-flight-hud"
   },
 
   "license": "CC0-1.0",
@@ -19,7 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-      "eu.deltatimo.minecraft.elytrahud.ElytraFlightHudModClient"
+      "net.asinusgrandus.minecraft.elytrahud.ElytraFlightHudModClient"
     ]
   },
   "mixins": [
