@@ -4,9 +4,14 @@ import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 import net.asinusgrandus.minecraft.elytrahud.ElytraFlightHudModClient;
 
+
+/*
+ * The attitude indicator (AI), is a flight instrument that informs the pilot of the aircraft orientation relative
+ * to Earth's horizon, and gives an immediate indication of the smallest orientation change.
+ * */
 public class AttitudeIndicator extends FlightInstrument {
 
-    public AttitudeIndicator(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    public AttitudeIndicator(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         super(isEnabled, drawer, data);
     }
 

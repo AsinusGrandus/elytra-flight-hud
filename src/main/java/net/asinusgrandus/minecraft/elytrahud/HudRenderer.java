@@ -53,7 +53,7 @@ public class HudRenderer {
             Matrix3f matrix3f = context.getMatrices().peek().getNormalMatrix();
 
             Drawer drawer = new Drawer(bufferBuilder, client.textRenderer, context, matrix4f, matrix3f, hud_alpha);
-            FlightInstrumentData data = new FlightInstrumentData(client);
+            AirDataInertialReferenceUnit data = new AirDataInertialReferenceUnit(client);
 
             FlightInstrument[] flightInstruments = {
                     new AirSpeedIndicator(true, drawer, data),

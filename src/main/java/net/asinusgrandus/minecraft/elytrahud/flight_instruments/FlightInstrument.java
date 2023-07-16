@@ -5,8 +5,8 @@ import net.asinusgrandus.minecraft.elytrahud.Drawer;
 public abstract class FlightInstrument {
     protected boolean isEnabled;
     protected Drawer drawer;
-    protected FlightInstrumentData data;
-    public FlightInstrument(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    protected AirDataInertialReferenceUnit data;
+    public FlightInstrument(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         this.isEnabled = isEnabled;
         this.drawer = drawer;
         this.data = data;

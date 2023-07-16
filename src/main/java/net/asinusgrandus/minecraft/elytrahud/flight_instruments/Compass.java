@@ -5,7 +5,7 @@ import net.asinusgrandus.minecraft.elytrahud.Drawer;
 import net.asinusgrandus.minecraft.elytrahud.ExtraMath;
 
 public class Compass extends FlightInstrument {
-    public Compass(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    public Compass(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         super(isEnabled, drawer, data);
     }
 

@@ -2,8 +2,11 @@ package net.asinusgrandus.minecraft.elytrahud.flight_instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
+/*
+ * A variometer is one of the flight instruments in an aircraft used to inform the pilot of the rate of descent or climb.
+ * */
 public class Variometer extends FlightInstrument {
-    public Variometer(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    public Variometer(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         super(isEnabled, drawer, data);
     }
 
@@ -13,13 +16,13 @@ public class Variometer extends FlightInstrument {
     @Override
     public void renderText() {
         float fallDistance = this.data.playerFallDisctance;
-        float safeFallDisctance = this.data.safePlayerFallDistance;
+        float safeFallDistance = this.data.safePlayerFallDistance;
         int fall_distance_color = 0x00FF00;
-        if (fallDistance > safeFallDisctance * 2f) {
+        if (fallDistance > safeFallDistance * 2f) {
             fall_distance_color = 0xFF0000;
-        } else if (fallDistance > safeFallDisctance) {
+        } else if (fallDistance > safeFallDistance) {
             fall_distance_color = 0xFF8800;
-        } else if (fallDistance > safeFallDisctance * 0.75f) {
+        } else if (fallDistance > safeFallDistance * 0.75f) {
             fall_distance_color = 0xFFFF00;
         }
 

@@ -11,12 +11,35 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-public class FlightInstrumentData {
-    public final double collisionDamageHorizontal, aspect, fov_deg, fov, hor_fov, hor_fov_deg, camera_pitch_deg;
-    public final float center_height, playerFallDisctance, compass_width, heading_fives, flight_vector_size, elytra_roll, flight_vector_x, flight_vector_y, flight_vector_radius, fontHeight, heading, pixels_per_deg, horizon_width, horizon_vertical_blip_length;
-    public final int air_speed, radar_height, safePlayerFallDistance, screenCenterX, screenCenterY, screenWidth, screenHeight;
+/**
+ * A class that holds all data the instruments need.
+ * */
+/*
+ * An Air Data Inertial Reference Unit (ADIRU) is a key component of the integrated Air Data Inertial Reference System (ADIRS),
+ * which supplies air data (airspeed, angle of attack and altitude) and inertial reference (position and attitude) information
+ * to the pilots' electronic flight instrument system displays as well as other systems on the aircraft
+ * */
+public class AirDataInertialReferenceUnit {
+    public final double aspect;
+    public final double camera_pitch_deg;
+    public final double collisionDamageHorizontal;
+    public final double fov_deg, fov, hor_fov, hor_fov_deg;
+
+    public final float flight_vector_x, flight_vector_y, flight_vector_radius, flight_vector_size;
+    public final float compass_width, heading_fives, heading;
+    public final float elytra_roll;
+    public final float fontHeight;
+    public final float pixels_per_deg;
+    public final float playerFallDisctance;
+    public final float center_height, horizon_width, horizon_vertical_blip_length;
+
+    public final int air_speed;
+    public final int radar_height;
+    public final int safePlayerFallDistance;
+    public final int screenCenterX, screenCenterY, screenWidth, screenHeight;
+
     public final Vec3d player_pos, player_velocity_vector;
-    public FlightInstrumentData(MinecraftClient client){
+    public AirDataInertialReferenceUnit(MinecraftClient client){
         ClientPlayerEntity player = client.player;
         TextRenderer textRenderer = client.textRenderer;
         Window window = client.getWindow();

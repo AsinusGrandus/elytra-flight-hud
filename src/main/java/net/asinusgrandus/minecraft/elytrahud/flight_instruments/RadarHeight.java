@@ -3,7 +3,7 @@ package net.asinusgrandus.minecraft.elytrahud.flight_instruments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
 public class RadarHeight extends FlightInstrument {
-    public RadarHeight(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    public RadarHeight(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         super(isEnabled, drawer, data);
     }
 

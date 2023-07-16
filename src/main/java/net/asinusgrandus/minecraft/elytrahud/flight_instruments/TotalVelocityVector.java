@@ -4,7 +4,7 @@ import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
 public class TotalVelocityVector extends FlightInstrument {
-    public TotalVelocityVector(boolean isEnabled, Drawer drawer, FlightInstrumentData data){
+    public TotalVelocityVector(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
         super(isEnabled, drawer, data);
     }
 
