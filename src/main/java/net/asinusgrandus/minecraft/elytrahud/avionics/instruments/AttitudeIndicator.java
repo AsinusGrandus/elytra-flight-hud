@@ -1,4 +1,4 @@
-package net.asinusgrandus.minecraft.elytrahud.avionics;
+package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
@@ -11,8 +11,8 @@ import net.asinusgrandus.minecraft.elytrahud.ElytraFlightHudModClient;
  * */
 public class AttitudeIndicator extends FlightInstrument {
 
-    public AttitudeIndicator(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
-        super(isEnabled, drawer, data);
+    public AttitudeIndicator(){
+        super();
     }
 
     @Override

@@ -1,13 +1,14 @@
-package net.asinusgrandus.minecraft.elytrahud.avionics;
+package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
+import net.asinusgrandus.minecraft.elytrahud.avionics.AirDataInertialReferenceUnit;
 
 /*
  * A variometer is one of the flight instruments in an aircraft used to inform the pilot of the rate of descent or climb.
  * */
 public class Variometer extends FlightInstrument {
-    public Variometer(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
-        super(isEnabled, drawer, data);
+    public Variometer(){
+        super();
     }
 
     @Override

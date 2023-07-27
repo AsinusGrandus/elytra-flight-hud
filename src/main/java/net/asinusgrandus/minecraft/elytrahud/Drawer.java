@@ -11,11 +11,11 @@ import java.util.Collection;
 
 public class Drawer {
 
-    private BufferBuilder bufferBuilder;
-    private TextRenderer textRenderer;
-    private DrawContext context;
-    private Matrix4f matrix4f;
-    private Matrix3f matrix3f;
+    private final BufferBuilder bufferBuilder;
+    private final TextRenderer textRenderer;
+    private final DrawContext context;
+    private final Matrix4f matrix4f;
+    private final Matrix3f matrix3f;
     public final float hud_alpha;
 
     public Drawer(BufferBuilder bufferBuilder, TextRenderer textRenderer, DrawContext context, Matrix4f matrix4f, Matrix3f matrix3f, float hud_alpha){

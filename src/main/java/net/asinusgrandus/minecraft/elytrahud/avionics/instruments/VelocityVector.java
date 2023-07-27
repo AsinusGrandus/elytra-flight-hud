@@ -3,9 +3,9 @@ package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
-public class SpeedVector extends FlightInstrument {
-    public SpeedVector(boolean isEnabled, Drawer drawer){
-        super(isEnabled, drawer);
+public class VelocityVector extends FlightInstrument {
+    public VelocityVector(){
+        super();
     }
 
     @Override

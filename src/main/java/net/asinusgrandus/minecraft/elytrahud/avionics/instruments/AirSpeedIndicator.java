@@ -1,10 +1,10 @@
-package net.asinusgrandus.minecraft.elytrahud.avionics;
+package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
 public class AirSpeedIndicator extends FlightInstrument {
-    public AirSpeedIndicator(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
-        super(isEnabled, drawer, data);
+    public AirSpeedIndicator(){
+        super();
     }
 
     @Override

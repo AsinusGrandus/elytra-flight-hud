@@ -1,12 +1,12 @@
-package net.asinusgrandus.minecraft.elytrahud.avionics;
+package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 import net.asinusgrandus.minecraft.elytrahud.ExtraMath;
 
 public class Compass extends FlightInstrument {
-    public Compass(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
-        super(isEnabled, drawer, data);
+    public Compass(){
+        super();
     }
 
     @Override

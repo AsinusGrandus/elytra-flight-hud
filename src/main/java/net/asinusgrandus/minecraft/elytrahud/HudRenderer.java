@@ -2,7 +2,8 @@ package net.asinusgrandus.minecraft.elytrahud;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.asinusgrandus.minecraft.elytrahud.flight_instruments.*;
+import net.asinusgrandus.minecraft.elytrahud.avionics.*;
+import net.asinusgrandus.minecraft.elytrahud.avionics.instruments.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -11,7 +12,6 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 public class HudRenderer {
-
     private static boolean isHudEnabled = true;
     private static float hud_alpha = 0.0f;
     public static boolean shouldRenderHud(){
@@ -25,8 +25,8 @@ public class HudRenderer {
     public static void onHudRender(DrawContext context, float tickDelta) {
 
         MinecraftClient client = MinecraftClient.getInstance();
-
         ClientPlayerEntity player = client.player;
+
         if (player == null) return;
 
         /**
@@ -53,17 +53,8 @@ public class HudRenderer {
             Matrix3f matrix3f = context.getMatrices().peek().getNormalMatrix();
 
             Drawer drawer = new Drawer(bufferBuilder, client.textRenderer, context, matrix4f, matrix3f, hud_alpha);
-            AirDataInertialReferenceUnit data = new AirDataInertialReferenceUnit(client);
 
-            FlightInstrument[] flightInstruments = {
-                    new AirSpeedIndicator(true, drawer, data),
-                    new AttitudeIndicator(true, drawer, data),
-                    new Compass(true, drawer, data),
-                    new RadarHeight(true, drawer, data),
-                    new TotalVelocityVector(true, drawer, data),
-                    new Variometer(true, drawer, data),
-                    new YLevelHeight(true, drawer, data)
-            };
+            ElytraFlightHudModClient.PrimaryFlightComputer.update(client, drawer);
 
             GlStateManager._depthMask(false);
             GlStateManager._disableCull();
@@ -73,26 +64,21 @@ public class HudRenderer {
 
             RenderSystem.lineWidth(2.0F);
 
-            for (FlightInstrument f: flightInstruments){
-                if (f.isEnabled()) {
-                    f.renderLines();
-                }
-            }
+            ElytraFlightHudModClient.PrimaryFlightComputer.forEachInstrument(instrument -> {
+                if (instrument.isEnabled()) instrument.renderLines();
+            });
 
             tessellator.draw();
             RenderSystem.lineWidth(1.0F);
 
             if (drawer.hud_alpha > 0.66){
-                for (FlightInstrument f: flightInstruments){
-                    if (f.isEnabled()) {
-                        f.renderText();
-                    }
-                }
+                ElytraFlightHudModClient.PrimaryFlightComputer.forEachInstrument(instrument -> {
+                    if (instrument.isEnabled()) instrument.renderText();
+                });
             }
 
             GlStateManager._enableCull();
             GlStateManager._depthMask(true);
-
         }
     }
 }

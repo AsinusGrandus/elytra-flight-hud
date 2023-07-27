@@ -1,5 +1,6 @@
 package net.asinusgrandus.minecraft.elytrahud;
 
+import net.asinusgrandus.minecraft.elytrahud.avionics.FlightComputer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -14,8 +15,13 @@ public class ElytraFlightHudModClient implements ClientModInitializer {
 	public static final String MOD_ID = "elytra-flight-hud";
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
+	public static FlightComputer PrimaryFlightComputer = new FlightComputer();
+
 	@Override
 	public void onInitializeClient() {
+		PrimaryFlightComputer.mountInstruments();
+
+
 		// Add the overlay to the hud
 		HudRenderCallback.EVENT.register(HudRenderer::onHudRender);
 
