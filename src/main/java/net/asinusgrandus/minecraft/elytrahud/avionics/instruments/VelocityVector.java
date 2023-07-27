@@ -1,11 +1,11 @@
-package net.asinusgrandus.minecraft.elytrahud.flight_instruments;
+package net.asinusgrandus.minecraft.elytrahud.avionics.instruments;
 
 import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
 
-public class TotalVelocityVector extends FlightInstrument {
-    public TotalVelocityVector(boolean isEnabled, Drawer drawer, AirDataInertialReferenceUnit data){
-        super(isEnabled, drawer, data);
+public class SpeedVector extends FlightInstrument {
+    public SpeedVector(boolean isEnabled, Drawer drawer){
+        super(isEnabled, drawer);
     }
 
     @Override

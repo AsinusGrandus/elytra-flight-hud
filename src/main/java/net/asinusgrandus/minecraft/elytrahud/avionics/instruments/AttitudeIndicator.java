@@ -1,4 +1,4 @@
-package net.asinusgrandus.minecraft.elytrahud.flight_instruments;
+package net.asinusgrandus.minecraft.elytrahud.avionics;
 
 import net.asinusgrandus.minecraft.elytrahud.DrawLineArguments;
 import net.asinusgrandus.minecraft.elytrahud.Drawer;
